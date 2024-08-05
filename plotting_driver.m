@@ -43,7 +43,6 @@ IS2_data_string = '/Users/chorvat/Code/IS2-Gridded-Products/Output/IS2_Data_25km
 
 %%
 
-
 global_product_preamble; 
 
 

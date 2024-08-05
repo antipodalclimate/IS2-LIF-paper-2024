@@ -1,42 +1,63 @@
-summer_months = 6:9;
-spring_months = [1:5 10:12];
-winter_months = [1 2 12];
+% Grab the concentration from PM 
 
-% Indices of various products
-BS_ind = 1;
-NT_ind = 2;
-CDR_ind = 3;
-OSI_ind = 4;
-AMSR_BS_ind = 5;
-AMSR_ASI_ind = 6;
+conc_PM = load_PM_SIC_data(PM_data_folder);
+
+%% Load in ICESat-2 data for comparison and clear workspace
+
+% Number of granules
+n_gran = h5read(IS2_data_string,'/GEO/n_gran_all'); 
+n_gran_strong = h5read(IS2_data_string,'/GEO/n_gran_strong'); 
+
+LIF = h5read(IS2_data_string,'/LIF/LIF'); 
+LIF_strong = h5read(IS2_data_string,'/LIF/LIF_strong'); 
+
+conc_SSMI_IS2 = h5read(IS2_data_string,'/LIF/SIC_SSMI')/100; 
+conc_SSMI_IS2_strong = h5read(IS2_data_string,'/LIF/SIC_SSMI_strong')/100; 
+
+conc_AMSR_IS2 = h5read(IS2_data_string,'/LIF/SIC_AMSR')/100; 
+conc_AMSR_IS2_strong = h5read(IS2_data_string,'/LIF/SIC_AMSR_strong')/100; 
+
+%% Some options
+
+% OPTS.summer_months = 6:9;
+% OPTS.spring_months = [1:5 10:12];
+% OPTS.winter_months = [1 2 12];
+
+% % Indices of various products
+% BS_ind = 1;
+% NT_ind = 2;
+% CDR_ind = 3;
+% OSI_ind = 4;
+% AMSR_BS_ind = 5;
+% AMSR_ASI_ind = 6;
 
 % We want to only consider those locations that have at least 12
 % intersecting tracks and at least 10000 total segments.
-track_thresh = 12;
-num_thresh = 10000;
+OPTS.track_thresh = 12;
 
 % maximum along-track SIC bias
-max_AT_bias = 0.005;
+OPTS.max_AT_bias = 0.005;
 
 % Thresholds for considering SIC coverage
-MIZ_thresh = 0.15;
-SIZ_thresh = 0.15;
+OPTS.MIZ_thresh = 0.15;
+OPTS.SIZ_thresh = 0.15;
 
 %% Locate Usable Areas
-conc_PM(conc_PM < MIZ_thresh) = nan;
-conc_SSMI_IS2(conc_SSMI_IS2 < MIZ_thresh | conc_SSMI_IS2 > 100) = nan;
-conc_SSMI_IS2_strong(conc_SSMI_IS2_strong < MIZ_thresh | conc_SSMI_IS2_strong > 100) = nan;
-conc_AMSR_IS2(conc_AMSR_IS2 < MIZ_thresh | conc_AMSR_IS2 > 100) = nan;
-conc_AMSR_IS2_strong(conc_AMSR_IS2_strong < MIZ_thresh | conc_AMSR_IS2_strong > 100) = nan;
+conc_PM(conc_PM < OPTS.MIZ_thresh) = nan;
 
-LIF(LIF < MIZ_thresh) = nan; 
-LIF_strong(LIF_strong < MIZ_thresh) = nan; 
+conc_SSMI_IS2(conc_SSMI_IS2 < OPTS.MIZ_thresh | conc_SSMI_IS2 > 100) = nan;
+conc_SSMI_IS2_strong(conc_SSMI_IS2_strong < OPTS.MIZ_thresh | conc_SSMI_IS2_strong > 100) = nan;
+conc_AMSR_IS2(conc_AMSR_IS2 < OPTS.MIZ_thresh | conc_AMSR_IS2 > 100) = nan;
+conc_AMSR_IS2_strong(conc_AMSR_IS2_strong < OPTS.MIZ_thresh | conc_AMSR_IS2_strong > 100) = nan;
+
+LIF(LIF < OPTS.MIZ_thresh) = nan; 
+LIF_strong(LIF_strong < OPTS.MIZ_thresh) = nan; 
 
 %% Now do some data pruning and segmentation
 
 % Examine the total number of tracks - and threshold. 
-enough_tracks = n_gran > track_thresh;
-enough_tracks_strong = n_gran_strong > track_thresh;
+enough_tracks = n_gran > OPTS.track_thresh;
+enough_tracks_strong = n_gran_strong > OPTS.track_thresh;
 
 % Now look at only months where there is all PM data.
 common_PM = (~isnan(sum(conc_PM,5))); % Does PM work
@@ -48,7 +69,7 @@ common_LIF_strong = (~isnan(LIF_strong)).*(~isnan(conc_SSMI_IS2)); % Does IS2 wo
 % Segment places where all PM data is compact if we require
 % Explore only those locations where all PM data is greater than the SIC
 % threshold
-common_SIZ_PM = sum(conc_PM > SIZ_thresh,5) == size(conc_PM,5);
+common_SIZ_PM = sum(conc_PM > OPTS.SIZ_thresh,5) == size(conc_PM,5);
 
 
 %% Computing along-track biases
@@ -62,7 +83,7 @@ AT_bias_AMSR = conc_AMSR_IS2 - conc_PM(:,:,:,:,5);
 % differences between the along-track AMSR data and the publicly available
 % AMSR data
 
-not_too_biased = abs(AT_bias_SSMI) < max_AT_bias;
+not_too_biased = abs(AT_bias_SSMI) < OPTS.max_AT_bias;
 
 % We no longer use bias-adjusted measurements
 
@@ -97,33 +118,27 @@ usable_strong = logical(enough_tracks_strong ... % well-sampled
     .*not_too_biased ... % not a huge along-track bias
     .*common_SIZ_PM); % has all PM data with compact ice.
 
-[summer_usemo,winter_usemo,spring_usemo] = deal(zeros(1,1,12));
-
-spring_usemo(:,:,spring_months) = 1;
-summer_usemo(:,:,summer_months) = 1;
-winter_usemo(:,:,winter_months) = 1;
-
-usable_winter = bsxfun(@times,usable,winter_usemo);
-usable_spring = bsxfun(@times,usable,spring_usemo);
-usable_summer = bsxfun(@times,usable,summer_usemo);
-
-% Matrix which is nans when not usable, 1 otherwise.
-use_nan = double(usable);
-use_nan(use_nan == 0) = nan;
-
-use_nan_winter = double(usable_winter);
-use_nan_winter(use_nan_winter == 0) = nan;
-
-use_nan_summer = double(usable_summer);
-use_nan_summer(use_nan_summer == 0) = nan;
-
-use_nan_spring = double(usable_spring);
-use_nan_spring(use_nan_spring == 0) = nan;
+% [summer_usemo,winter_usemo,spring_usemo] = deal(zeros(1,1,12));
+% 
+% spring_usemo(:,:,OPTS.spring_months) = 1;
+% summer_usemo(:,:,OPTS.summer_months) = 1;
+% winter_usemo(:,:,OPTS.winter_months) = 1;
+% 
+% usable_winter = bsxfun(@times,usable,winter_usemo);
+% usable_spring = bsxfun(@times,usable,spring_usemo);
+% usable_summer = bsxfun(@times,usable,summer_usemo);
+% 
+% % Matrix which is nans when not usable, 1 otherwise.
+% use_nan = double(usable);
+% use_nan(use_nan == 0) = nan;
+% 
+% use_nan_winter = double(usable_winter);
+% use_nan_winter(use_nan_winter == 0) = nan;
+% 
+% use_nan_summer = double(usable_summer);
+% use_nan_summer(use_nan_summer == 0) = nan;
+% 
+% use_nan_spring = double(usable_spring);
+% use_nan_spring(use_nan_spring == 0) = nan;
 
 %% compute and report some statistics
-
-area_coverage = squeeze(sum(bsxfun(@times,area_NH,~isnan(LIF)),[1 2]));
-area_coverage_strong = squeeze(sum(bsxfun(@times,area_NH,~isnan(LIF_strong)),[1 2]));
-
-area_enough = squeeze(sum(bsxfun(@times,area_NH,enough_tracks),[1 2]));
-area_enough_strong = squeeze(sum(bsxfun(@times,area_NH,enough_tracks_strong),[1 2]));
