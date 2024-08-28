@@ -82,7 +82,10 @@ Bias_abs_595_barfirst = 100*squeeze(prctile(abs(mean(SIC_bias,3)),100*[exp(-2) 1
 figure(1)
 clf
 
-subplot(421)
+
+subplot('position',[.05 .725 .45 .225])
+
+
 histogram(100*Bias_i,[-10:.1:10],'Normalization','probability','facecolor',[.8 .4 .4],'edgecolor','none');
 grid on; box on;
 xlabel('B_i'); ylabel('PDF');
@@ -91,10 +94,12 @@ xline(prctile(100*Bias_i,75),'k','LineWidth',1)
 xline(prctile(100*Bias_i,25),'k','LineWidth',1)
 set(gca,'yticklabel','')
 xlim([-5 5])
-subplot(422)
+
+subplot('position',[.525 .725 .45 .225])
+
 histogram(Std_i,[0:.05:5],'Normalization','probability','facecolor',[.8 .4 .4],'edgecolor','none');
 grid on; box on;
-xlabel('B_i'); ylabel('PDF');
+xlabel('B_i'); % ylabel('PDF');
 title('Path-based variance in $B_i$','interpreter','latex')
 xline(prctile(Std_i,75),'k','LineWidth',1)
 xline(prctile(Std_i,25),'k','LineWidth',1)
@@ -104,7 +109,8 @@ xlim([0 3])
 %%
 
 
-subplot(412)
+subplot('position',[.05 .4 .95 .225])
+
 % Plot the mean over all images and permutations as a function of crossing
 % number
 plot(1:perm_length,Bias_n,'k','linewidth',1);
@@ -112,10 +118,12 @@ hold on
 jbfill(1:perm_length,Bias_n + Std_n,Bias_n - Std_n,[.4 .4 .4],[0 0 0],1,0.25);
 jbfill(1:perm_length,Bias_n + Bias_std_angle,Bias_n - Bias_std_angle,[.4 .4 .8],[0 0 0],1,0.25);
 grid on; box on;
-xlim([1 perm_length])
+xlim([1 50])
 title('Mean Biases and Confidence Intervals','interpreter','latex')
+set(gca,'xticklabel','')
 
-subplot(413)
+
+subplot('position',[.05 .075 .95 .225])
 % Now looking at absolute biases
 plot(1:perm_length,Bias_abs_n,'k','linewidth',1);
 hold on
@@ -125,8 +133,10 @@ hold on
 plot(1:perm_length,Bias_abs_barfirst_angle,'b','linewidth',1);
 jbfill(1:perm_length,Bias_abs_595_barfirst(1,:),Bias_abs_595_barfirst(2,:),[.4 .4 .8],[0 0 0],1,0.25);
 grid on; box on;
-xlim([1 perm_length])
-
+xline(7,'label','2.5\% cutoff','interpreter','latex','fontsize',10)
+% yline(2.5,'color','k')
+xlim([1 50])
+xlabel('Crossing Number')
 
 title('Absolute Biases and Confidence Intervals','interpreter','latex')
 
@@ -143,21 +153,26 @@ title('Absolute Biases and Confidence Intervals','interpreter','latex')
 % legend('Crossing 0','Crossing 5','Crossing 10');
 
 %%
-subplot(414)
-r = 100*sum(abs(SIC_bias) < 0.025,[1 3]) / numel(SIC_bias(:,1,:));
-s = 100*sum(abs(SIC_bias) < 0.05,[1 3]) / numel(SIC_bias(:,1,:));
 
-plot(1:perm_length,r,'k')
-hold on;
-
-plot(1:perm_length,s,'r')
-grid on; box on;
-xlim([1 perm_length]);
-ylim([0 100])
-legend('Bias < 2.5%','Bias < 5%')
-
+% subplot('position',[.05 .075  .9 .175])
+% p = 100*sum(abs(SIC_bias) < 0.01,[1 3]) / numel(SIC_bias(:,1,:));
+% r = 100*sum(abs(SIC_bias) < 0.03,[1 3]) / numel(SIC_bias(:,1,:));
+% s = 100*sum(abs(SIC_bias) < 0.05,[1 3]) / numel(SIC_bias(:,1,:));
+% 
+% plot(1:perm_length,p,'b')
+% hold on
+% plot(1:perm_length,r,'k')
+% 
+% plot(1:perm_length,s,'r')
+% grid on; box on;
+% xlim([1 50])
+% ylim([0 100])
+% legend('Bias < 1%','Bias < 3%','Bias < 5%')
+% title('Fraction within bias threshold','interpreter','latex')
+%
+% %%
 allAxesInFigure = findall(gcf,'type','axes');
-letter = {'(a)','(b)','(c)','(d)','(e)','(f)','(g)','(e)','(c)'};
+letter = {'(d)','(c)','(b)','(a)','(e)','(f)','(g)','(e)','(c)'};
 
 for i = 1:length(allAxesInFigure)
 
@@ -165,13 +180,13 @@ for i = 1:length(allAxesInFigure)
 
     set(allAxesInFigure(i),'fontname','times','fontsize',8,'xminortick','on','yminortick','on')
 
-    annotation('textbox',[posy(1) - .025 posy(2)+posy(4) + .035 .025 .025], ...
+    annotation('textbox',[posy(1) - .025 posy(2)+posy(4) + .025 .025 .025], ...
         'String',letter{i},'LineStyle','none','FontName','Helvetica', ...
         'FontSize',8,'Tag','legtag');
 
 end
 
-pos = [6.5 4];
+pos = [6.5 4.25];
 set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
 set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
 print([Figure_folder '/bias-figure.pdf'],'-dpdf','-r1200');

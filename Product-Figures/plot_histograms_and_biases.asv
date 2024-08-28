@@ -1,0 +1,126 @@
+%% Function to plot differences between PM products and the LIF
+close all
+
+bias_from_IS = bsxfun(@minus,conc_PM,LIF);
+
+
+nPM = size(bias_from_IS,5);
+
+namer = {'Bootstrap','NASATeam','NSIDC-CDR','OSI-430b','AMRS2-NT','AMRS2-ASI','IS2-LIF'};
+
+
+summer_mos = [6 7 8 9];
+winter_mos = [1 2 3 4 5 10 11 12];
+
+nan_usable = 1*usable;
+nan_usable(nan_usable == 0) = nan;
+
+%
+
+sic_bins = linspace(0,1,41);
+bias_bins = linspace(-1,1,201);
+
+IS2_plot = nan_usable .* LIF;
+
+IS2_summer = IS2_plot(:,:,summer_mos,:);
+IS2_summer = IS2_summer(~isnan(IS2_summer));
+
+IS2_winter = IS2_plot(:,:,winter_mos,:);
+IS2_winter = IS2_winter(~isnan(IS2_winter));
+
+delx = 0.035;
+xfudge = 0.01;
+xwidth = 1/(nPM+1) - delx - xfudge;
+
+dely = 0.1;
+yfudge = 0.025;
+ywidth = 1/2 - dely - yfudge;
+
+
+
+for i = 1:nPM
+
+
+
+    plotpos = [(i-1)*xwidth + i*delx dely xwidth ywidth];
+
+
+    subplot('position',plotpos)
+
+    histogram(sic_summer - IS2_summer,bias_bins,'FaceColor',[.8 .4 .4],'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+    hold on
+    histogram(sic_winter - IS2_winter,bias_bins,'FaceColor',[.4 .4 .8],'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+    hold off
+    xlim([-.2 .2])
+    set(gca,'yticklabel','')
+
+    grid on; box on;
+
+    if i == 1
+        ylabel('$\Delta$ from LIF','interpreter','latex')
+    end
+
+    plotpos = [(i-1)*xwidth + i*delx  2*dely + ywidth xwidth ywidth];
+
+    sic_plot = nan_usable.*conc_PM(:,:,:,:,i);
+
+    sic_summer = sic_plot(:,:,summer_mos,:);
+    sic_summer = sic_summer(~isnan(sic_summer));
+
+    sic_winter = sic_plot(:,:,winter_mos,:);
+    sic_winter = sic_winter(~isnan(sic_winter));
+
+    subplot('position',plotpos)
+
+    histogram(sic_summer,sic_bins,'FaceColor',[.8 .4 .4],'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+    hold on
+    histogram(sic_winter,sic_bins,'FaceColor',[.4 .4 .8],'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+    hold off
+    grid on; box on;
+    set(gca,'yticklabel','')
+    xlim([0.7 1]);
+    title(namer{i},'interpreter','latex','fontsize',12)
+
+    if i == 1
+        ylabel('SIC Distribution','interpreter','latex')
+
+    end
+
+end
+
+i = 7;
+
+plotpos = [(i-1)*xwidth + i*delx + xfudge dely + 2*yfudge xwidth 2*ywidth - 2*dely];
+subplot('position',plotpos)
+
+histogram(IS2_summer,sic_bins,'FaceColor',[.8 .4 .4],'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+hold on
+histogram(IS2_winter,sic_bins,'FaceColor',[.4 .4 .8],'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+hold off
+grid on; box on;
+xlim([0.5 1]);
+set(gca,'yticklabel','')
+title(namer{i},'interpreter','latex','fontsize',12)
+
+
+legend({'Summer','Winter','position', [plotpos(1) plotpo])
+
+allAxesInFigure = findall(gcf,'type','axes');
+% letter = {'(a)','(b)','(c)','(a)','(e)','(f)','(g)','(e)','(c)'};
+
+for i = 1:length(allAxesInFigure)
+
+    posy = get(allAxesInFigure(i),'position');
+
+    set(allAxesInFigure(i),'fontname','times','fontsize',8,'xminortick','on','yminortick','on')
+
+    % annotation('textbox',[posy(1) posy(2)+posy(4) - .025 .025 .025], ...
+    %     'String',letter{i},'LineStyle','none','FontName','Helvetica', ...
+    %     'FontSize',8,'Tag','legtag');
+
+end
+
+pos = [6.5 4];
+set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
+set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
+print([Figure_folder '/histogram-figure.pdf'],'-dpdf','-r1200');

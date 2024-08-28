@@ -31,6 +31,8 @@ plot_orbital_data(Figure_folder,orientation_hist,lat_disc,orient_disc);
 
 plot_single_image(Figure_folder,image_location,image_done,true_SIC,length_ice_measured,length_measured,sample_orients,sample_points);
 
+%%
+
 plot_emulation_uncertainty(Figure_folder,true_SIC,length_ice_measured,length_measured)
 
 %% Figures related to sea ice concentration comparison with global products
@@ -41,15 +43,23 @@ addpath('Product-Figures');
 PM_data_folder = '/Users/chorvat/Dropbox (Brown)/Research Projects/Active/Data/SIC-Data';
 IS2_data_string = '/Users/chorvat/Code/IS2-Gridded-Products/Output/IS2_Data_25km_NH_v6.h5';
 
+
+addpath('/Users/chorvat/Dropbox (Brown)/Research Projects/Plot-Tools/'); 
+addpath('/Users/chorvat/Dropbox (Brown)/Research Projects/Plot-Tools/NE_Coastlines/'); 
+
 %%
 
 global_product_preamble; 
 
-
+%%
 % Here look at global coverage of the IS2 product
 addpath([Plotting_folder '/LIF-Coverage'])
+
 plot_LIF_coverage; 
 
 
 %% Here look at biases from the IS2 product and other PM data
 
+plot_histograms_and_biases; 
+
+print_statistics; 

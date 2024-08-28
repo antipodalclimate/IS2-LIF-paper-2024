@@ -17,6 +17,11 @@ conc_SSMI_IS2_strong = h5read(IS2_data_string,'/LIF/SIC_SSMI_strong')/100;
 conc_AMSR_IS2 = h5read(IS2_data_string,'/LIF/SIC_AMSR')/100; 
 conc_AMSR_IS2_strong = h5read(IS2_data_string,'/LIF/SIC_AMSR_strong')/100; 
 
+grid_area = h5read(IS2_data_string,'/area');
+grid_lon = h5read(IS2_data_string,'/longitude');
+grid_lat = h5read(IS2_data_string,'/latitude');
+
+
 %% Some options
 
 % OPTS.summer_months = 6:9;
@@ -33,10 +38,10 @@ conc_AMSR_IS2_strong = h5read(IS2_data_string,'/LIF/SIC_AMSR_strong')/100;
 
 % We want to only consider those locations that have at least 12
 % intersecting tracks and at least 10000 total segments.
-OPTS.track_thresh = 12;
+OPTS.track_thresh = 8;
 
 % maximum along-track SIC bias
-OPTS.max_AT_bias = 0.005;
+OPTS.max_AT_bias = 0.025;
 
 % Thresholds for considering SIC coverage
 OPTS.MIZ_thresh = 0.15;
@@ -56,8 +61,8 @@ LIF_strong(LIF_strong < OPTS.MIZ_thresh) = nan;
 %% Now do some data pruning and segmentation
 
 % Examine the total number of tracks - and threshold. 
-enough_tracks = n_gran > OPTS.track_thresh;
-enough_tracks_strong = n_gran_strong > OPTS.track_thresh;
+enough_tracks = n_gran >= OPTS.track_thresh;
+enough_tracks_strong = n_gran_strong >= OPTS.track_thresh;
 
 % Now look at only months where there is all PM data.
 common_PM = (~isnan(sum(conc_PM,5))); % Does PM work
@@ -71,6 +76,7 @@ common_LIF_strong = (~isnan(LIF_strong)).*(~isnan(conc_SSMI_IS2)); % Does IS2 wo
 % threshold
 common_SIZ_PM = sum(conc_PM > OPTS.SIZ_thresh,5) == size(conc_PM,5);
 
+SIE_PM = conc_PM > OPTS.MIZ_thresh; 
 
 %% Computing along-track biases
 
@@ -83,7 +89,7 @@ AT_bias_AMSR = conc_AMSR_IS2 - conc_PM(:,:,:,:,5);
 % differences between the along-track AMSR data and the publicly available
 % AMSR data
 
-not_too_biased = abs(AT_bias_SSMI) < OPTS.max_AT_bias;
+not_too_biased = max(abs(AT_bias_SSMI),abs(AT_bias_AMSR)) < OPTS.max_AT_bias;
 
 % We no longer use bias-adjusted measurements
 
@@ -117,6 +123,16 @@ usable_strong = logical(enough_tracks_strong ... % well-sampled
     .*common_PM.*common_LIF ... % All PM and IS2 data is present
     .*not_too_biased ... % not a huge along-track bias
     .*common_SIZ_PM); % has all PM data with compact ice.
+
+
+%% Some output
+
+
+
+%%
+
+
+
 
 % [summer_usemo,winter_usemo,spring_usemo] = deal(zeros(1,1,12));
 % 
