@@ -1,10 +1,5 @@
 %% 
 
-area_usable_PM_alone = bsxfun(@times,usable_PM_alone,grid_area);
-area_usable = bsxfun(@times,usable,grid_area);
-area_usable_strong = bsxfun(@times,usable_strong,grid_area);
-
-extent_PM = bsxfun(@times,SIE_PM,grid_area); 
 
 dater = datetime('01/15/2018') + calmonths(0:size(area_usable,4)*12-1);
 

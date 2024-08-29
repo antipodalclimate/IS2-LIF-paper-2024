@@ -2,29 +2,10 @@
 close all
 
 
-nPM = size(conc_PM,5);
-
-namer = {'Bootstrap','NASATeam','NSIDC-CDR','OSI-430b','AMRS2-NT','AMRS2-ASI','IS2-LIF'};
-
-
-summer_mos = [6 7 8];
-winter_mos = [1 2 3 4 5 9 10 11 12];
-
-nan_usable = 1*usable;
-nan_usable(nan_usable == 0) = nan;
-
 %
 
 sic_bins = linspace(0,1,101);
 bias_bins = linspace(-1,1,201);
-
-IS2_plot = nan_usable .* LIF;
-
-IS2_summer = IS2_plot(:,:,summer_mos,:);
-IS2_summer = IS2_summer(~isnan(IS2_summer));
-
-IS2_winter = IS2_plot(:,:,winter_mos,:);
-IS2_winter = IS2_winter(~isnan(IS2_winter));
 
 delx = 0.035;
 xfudge = 0.01;

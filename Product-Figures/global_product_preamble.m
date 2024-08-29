@@ -10,6 +10,7 @@ n_gran_strong = h5read(IS2_data_string,'/GEO/n_gran_strong');
 
 LIF = h5read(IS2_data_string,'/LIF/LIF'); 
 LIF_strong = h5read(IS2_data_string,'/LIF/LIF_strong'); 
+LIF_specular = h5read(IS2_data_string,'/LIF/LIF_spec'); 
 
 conc_SSMI_IS2 = h5read(IS2_data_string,'/LIF/SIC_SSMI')/100; 
 conc_SSMI_IS2_strong = h5read(IS2_data_string,'/LIF/SIC_SSMI_strong')/100; 
@@ -157,4 +158,34 @@ usable_strong = logical(enough_tracks_strong ... % well-sampled
 % use_nan_spring = double(usable_spring);
 % use_nan_spring(use_nan_spring == 0) = nan;
 
-%% compute and report some statistics
+%% Other helpers
+namer = {'Bootstrap','NASATeam','NSIDC-CDR','OSI-430b','AMRS2-NT','AMRS2-ASI','IS2-LIF'};
+
+
+summer_mos = [6 7 8];
+winter_mos = [1 2 3 4 5 9 10 11 12];
+
+nPM = size(conc_PM,5);
+
+nan_usable = 1*usable;
+nan_usable(nan_usable == 0) = nan;
+
+nan_usable_strong = 1*usable_strong;
+nan_usable_strong(nan_usable_strong == 0) = nan;
+
+area_usable_PM_alone = bsxfun(@times,usable_PM_alone,grid_area);
+
+area_usable = bsxfun(@times,usable,grid_area);
+area_usable_strong = bsxfun(@times,usable_strong,grid_area);
+
+extent_PM = bsxfun(@times,SIE_PM,grid_area); 
+
+
+IS2_plot = nan_usable .* LIF;
+
+IS2_summer = IS2_plot(:,:,summer_mos,:);
+IS2_summer = IS2_summer(~isnan(IS2_summer));
+
+IS2_winter = IS2_plot(:,:,winter_mos,:);
+IS2_winter = IS2_winter(~isnan(IS2_winter));
+
