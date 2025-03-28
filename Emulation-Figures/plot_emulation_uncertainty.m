@@ -88,7 +88,7 @@ subplot('position',[.05 .725 .45 .225])
 
 histogram(100*Bias_i,[-10:.1:10],'Normalization','probability','facecolor',[.8 .4 .4],'edgecolor','none');
 grid on; box on;
-xlabel('B_i'); ylabel('PDF');
+xlabel('B_i (%)'); ylabel('PDF');
 title('Best-case bias $B_i = LIF_i^* - SIC$','interpreter','latex')
 xline(prctile(100*Bias_i,75),'k','LineWidth',1)
 xline(prctile(100*Bias_i,25),'k','LineWidth',1)
@@ -99,7 +99,7 @@ subplot('position',[.525 .725 .45 .225])
 
 histogram(Std_i,[0:.05:5],'Normalization','probability','facecolor',[.8 .4 .4],'edgecolor','none');
 grid on; box on;
-xlabel('B_i'); % ylabel('PDF');
+xlabel('B_i (%)'); % ylabel('PDF');
 title('Path-based variance in $B_i$','interpreter','latex')
 xline(prctile(Std_i,75),'k','LineWidth',1)
 xline(prctile(Std_i,25),'k','LineWidth',1)
@@ -121,7 +121,7 @@ grid on; box on;
 xlim([1 50])
 title('Mean Biases and Confidence Intervals','interpreter','latex')
 set(gca,'xticklabel','')
-
+ylabel('%')
 
 subplot('position',[.05 .075 .95 .225])
 % Now looking at absolute biases
@@ -137,6 +137,7 @@ xline(7,'label','2.5\% cutoff','interpreter','latex','fontsize',10)
 % yline(2.5,'color','k')
 xlim([1 50])
 xlabel('Crossing Number')
+ylabel('%')
 
 title('Absolute Biases and Confidence Intervals','interpreter','latex')
 

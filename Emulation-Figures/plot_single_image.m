@@ -178,7 +178,7 @@ set(gca,'xticklabel','')
 Ax{3} = subplot('position',[.6 .3917 .35 .2167]);
 
 
-plot(1:n_crossings,cumsum(im_ice_length)./cumsum(im_length),'Color','k','linewidth',2);
+plot(1:n_crossings,100*cumsum(im_ice_length)./cumsum(im_length),'Color','k','linewidth',2);
 hold on
 drawnow
 
@@ -192,14 +192,14 @@ drawnow
 
 hold on
 ylimmer = get(gca,'ylim');
-if ylimmer(2) - ylimmer(1) < 0.2
-     ylimmer = im_true_SIC + [-0.15 0.15]; 
-     ylimmer(2) = min(ylimmer(2),1);
+if ylimmer(2) - ylimmer(1) < 20
+     ylimmer = 100*(im_true_SIC + [-0.15 0.15]); 
+     ylimmer(2) = min(ylimmer(2),100);
      ylimmer(1) = max(ylimmer(1),0);
 end
 
-scatter(1:n_crossings,im_ice_length./im_length,10,'filled','markerfacecolor',[.8 .2 .2],'markeredgecolor','none'); 
-yline(true_SIC(image_ind),'color',[.2 .2 .8],'linewidth',1)
+scatter(1:n_crossings,100*im_ice_length./im_length,10,'filled','markerfacecolor',[.8 .2 .2],'markeredgecolor','none'); 
+yline(100*true_SIC(image_ind),'color',[.2 .2 .8],'linewidth',1)
 
 % jbfill(1:n_crossings,im_mean_LIF + im_bias_std,im_mean_LIF - im_bias_std,[.4 .4 .4],[0 0 0]);
 
@@ -218,22 +218,22 @@ leg.ItemTokenSize = [5,5];
 
 Ax{4} = subplot('position',[.6 .1 .35 .2167]);
 
-plot(1:perm_length,mean(im_bias,1),'color','k')
+plot(1:perm_length,100*mean(im_bias,1),'color','k')
 hold on
-jbfill(1:perm_length,mean(im_bias,1) + im_bias_std,mean(im_bias,1) - im_bias_std,[.4 .4 .4],[0 0 0]);
+jbfill(1:perm_length,100*(mean(im_bias,1) + im_bias_std),100*(mean(im_bias,1) - im_bias_std),[.4 .4 .4],[0 0 0]);
 hold off
 xlim([1 perm_length])
 
 ylimmer = get(gca,'ylim');
-if ylimmer(2) - ylimmer(1) < 0.1
-     ylimmer = mean(mean(im_bias,1)) + [-0.15 0.15]; 
-     ylimmer(2) = min(ylimmer(2),1);
+if ylimmer(2) - ylimmer(1) < 10
+     ylimmer = 100*(mean(mean(im_bias,1)) + [-0.15 0.15]); 
+     ylimmer(2) = min(ylimmer(2),100);
      ylimmer(1) = max(ylimmer(1),0);
 end
 
 xlabel('Crossing No.')
 yline(im_true_SIC - LIFN(end),'-r');
-
+ylabel('%')
 
 
 title('SRGT and LIF Bias','interpreter','latex')

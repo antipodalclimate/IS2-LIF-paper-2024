@@ -62,6 +62,13 @@ plot_LIF_coverage;
 
 plot_histograms_and_biases; 
 
+%% Here now look only as summer
+
+
+%% Here now compare weak and strong beams
+
+
+
 %%
 
 print_statistics; 
