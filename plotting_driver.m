@@ -66,6 +66,8 @@ plot_histograms_and_biases;
 
 
 %% Here now compare weak and strong beams
+plot_weak_strong_comp; 
+
 
 
 

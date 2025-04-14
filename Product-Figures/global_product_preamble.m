@@ -7,9 +7,11 @@ conc_PM = load_PM_SIC_data(PM_data_folder);
 % Number of granules
 n_gran = h5read(IS2_data_string,'/GEO/n_gran_all'); 
 n_gran_strong = h5read(IS2_data_string,'/GEO/n_gran_strong'); 
+n_gran_weak = n_gran - n_gran_strong; 
 
 LIF = h5read(IS2_data_string,'/LIF/LIF'); 
 LIF_strong = h5read(IS2_data_string,'/LIF/LIF_strong'); 
+LIF_weak = h5read(IS2_data_string,'/LIF/LIF_weak'); 
 LIF_specular = h5read(IS2_data_string,'/LIF/LIF_spec'); 
 
 conc_SSMI_IS2 = h5read(IS2_data_string,'/LIF/SIC_SSMI')/100; 
@@ -58,12 +60,14 @@ conc_AMSR_IS2_strong(conc_AMSR_IS2_strong < OPTS.MIZ_thresh | conc_AMSR_IS2_stro
 
 LIF(LIF < OPTS.MIZ_thresh) = nan; 
 LIF_strong(LIF_strong < OPTS.MIZ_thresh) = nan; 
+LIF_weak(LIF_weak < OPTS.MIZ_thresh) = nan; 
 
 %% Now do some data pruning and segmentation
 
 % Examine the total number of tracks - and threshold. 
 enough_tracks = n_gran >= OPTS.track_thresh;
 enough_tracks_strong = n_gran_strong >= OPTS.track_thresh;
+enough_tracks_weak = n_gran_weak >= OPTS.track_thresh;
 
 % Now look at only months where there is all PM data.
 common_PM = (~isnan(sum(conc_PM,5))); % Does PM work
@@ -125,38 +129,12 @@ usable_strong = logical(enough_tracks_strong ... % well-sampled
     .*not_too_biased ... % not a huge along-track bias
     .*common_SIZ_PM); % has all PM data with compact ice.
 
+% Which grid cells do we include.
+usable_weak = logical(enough_tracks_weak... % well-sampled
+    .*common_PM.*common_LIF ... % All PM and IS2 data is present
+    .*not_too_biased ... % not a huge along-track bias
+    .*common_SIZ_PM); % has all PM data with compact ice.
 
-%% Some output
-
-
-
-%%
-
-
-
-
-% [summer_usemo,winter_usemo,spring_usemo] = deal(zeros(1,1,12));
-% 
-% spring_usemo(:,:,OPTS.spring_months) = 1;
-% summer_usemo(:,:,OPTS.summer_months) = 1;
-% winter_usemo(:,:,OPTS.winter_months) = 1;
-% 
-% usable_winter = bsxfun(@times,usable,winter_usemo);
-% usable_spring = bsxfun(@times,usable,spring_usemo);
-% usable_summer = bsxfun(@times,usable,summer_usemo);
-% 
-% % Matrix which is nans when not usable, 1 otherwise.
-% use_nan = double(usable);
-% use_nan(use_nan == 0) = nan;
-% 
-% use_nan_winter = double(usable_winter);
-% use_nan_winter(use_nan_winter == 0) = nan;
-% 
-% use_nan_summer = double(usable_summer);
-% use_nan_summer(use_nan_summer == 0) = nan;
-% 
-% use_nan_spring = double(usable_spring);
-% use_nan_spring(use_nan_spring == 0) = nan;
 
 %% Other helpers
 namer = {'Bootstrap','NASATeam','NSIDC-CDR','OSI-430b','AMRS2-NT','AMRS2-ASI','IS2-LIF'};
@@ -173,6 +151,9 @@ nan_usable(nan_usable == 0) = nan;
 nan_usable_strong = 1*usable_strong;
 nan_usable_strong(nan_usable_strong == 0) = nan;
 
+nan_usable_weak = 1*usable_strong;
+nan_usable_weak(nan_usable_weak == 0) = nan;
+
 area_usable_PM_alone = bsxfun(@times,usable_PM_alone,grid_area);
 
 area_usable = bsxfun(@times,usable,grid_area);
@@ -180,8 +161,12 @@ area_usable_strong = bsxfun(@times,usable_strong,grid_area);
 
 extent_PM = bsxfun(@times,SIE_PM,grid_area); 
 
-
+%%
 IS2_plot = nan_usable .* LIF;
+IS2_plot_weak = nan_usable.*LIF_weak; 
+IS2_plot_strong = nan_usable_strong.*LIF_strong; 
+IS2_plot_spec = nan_usable.*LIF_specular; 
+
 
 IS2_summer = IS2_plot(:,:,summer_mos,:);
 IS2_summer = IS2_summer(~isnan(IS2_summer));
