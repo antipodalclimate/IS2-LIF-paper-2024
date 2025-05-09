@@ -29,6 +29,8 @@ addpath([Plotting_folder '/Emulation-Figures'])
 
 plot_orbital_data(Figure_folder,orientation_hist,lat_disc,orient_disc);
 
+%%
+
 plot_single_image(Figure_folder,image_location,image_done,true_SIC,length_ice_measured,length_measured,sample_orients,sample_points);
 
 %%
@@ -64,13 +66,15 @@ plot_histograms_and_biases;
 
 %% Here now look only as summer
 
-
-%% Here now compare weak and strong beams
-plot_weak_strong_comp; 
-
-
-
-
 %%
 
 print_statistics; 
+
+%% 
+comp_weak_spec; 
+
+%% Supporting Figures
+
+comp_monthly_hist; 
+
+comp_spec_monthly; 

@@ -61,7 +61,7 @@ im_meas_SIC = nan(n_perms,perm_length);
 for j = 1:n_perms
 
     % randomly permute the number of crossings
-    % rp =e randperm(n_crossings,perm_length);
+    % rp = randperm(n_crossings,perm_length);
     % rp = randsample(n_crossings,perm_length); 
     rp = randi(n_crossings,[n_crossings 1]); 
     im_meas_SIC(j,:) = cumsum(im_ice_length(rp))./cumsum(im_length(rp));

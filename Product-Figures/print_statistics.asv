@@ -74,9 +74,9 @@ LIF_all_bias = nan_usable.*(LIF_all - LIF_product);
 mean_all_bias_summer = squeeze(nanmean(LIF_all_bias(:,:,summer_mos,:),'all'));
 mean_all_bias_winter = squeeze(nanmean(LIF_all_bias(:,:,winter_mos,:),'all'));
 
-% Statistics of the no dark leads LIF. 
-mean_LIF_nodark_summer = squeeze(nanmean(nan_usable_nodark(:,:,summer_mos,:).*LIF_spec(:,:,summer_mos,:),'all')); 
-mean_LIF_nodark_winter = squeeze(nanmean(nan_usable_nodark(:,:,winter_mos,:).*LIF_spec(:,:,winter_mos,:),'all')); 
+% Statistics of the all-leads LIF. 
+mean_LIF_nodark_summer = squeeze(nanmean(nan_usable_nodark(:,:,summer_mos,:).*LIF_odark(:,:,summer_mos,:),'all')); 
+mean_LIF_nodark_winter = squeeze(nanmean(nan_usable_nodark(:,:,winter_mos,:).*LIF_nodark(:,:,winter_mos,:),'all')); 
 
 % Statistics of the specular-only LIF. 
 mean_LIF_spec_summer = squeeze(nanmean(nan_usable(:,:,summer_mos,:).*LIF_spec(:,:,summer_mos,:),'all')); 
