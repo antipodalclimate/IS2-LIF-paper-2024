@@ -25,7 +25,7 @@ shocolor = [.8 .8 .4];
 SIClims = 100*[0.6 1];
 biaslims = 100*[-.3 .3];
 
-usable_matrix = nan_usable_nodark; 
+usable_matrix = nan_usable; 
 
 
 for PMind = 1:nPM

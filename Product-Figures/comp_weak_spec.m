@@ -19,7 +19,7 @@ plotter = 100*nan_usable(:,:,summer_mos,:).*(LIF_spec(:,:,summer_mos,:) - LIF_al
 
 subplot('position',[.05 .3 .25 .6])
 
-histogram(plotter(~isnan(plotter)),bias_bins,'FaceColor',sumcolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+p1 = histogram(plotter(~isnan(plotter)),bias_bins,'FaceColor',sumcolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
 hold on
 errplot = mean(plotter(~isnan(plotter)));
 
@@ -33,7 +33,7 @@ xline(errplot,'--',errstr,'color',sumcolor,'fontsize',8);
 
 
 plotter = 100*nan_usable(:,:,winter_mos,:).*(LIF_spec(:,:,winter_mos,:) - LIF_all(:,:,winter_mos,:));
-histogram(plotter(~isnan(plotter)),bias_bins,'FaceColor',wincolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
+p2 = histogram(plotter(~isnan(plotter)),bias_bins,'FaceColor',wincolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
 
 errplot = mean(plotter(~isnan(plotter)));
 
@@ -54,7 +54,7 @@ grid on; box on;
 title('Specular - All Leads','interpreter','latex')
 xlabel('$\Delta$ LIF','interpreter','latex')
 
-legend('``Summer"','"Non-Summer"','location',[.225 .075 .2 .025])
+legend([p1 p2],'``Summer"','"Non-Summer"','location',[.225 .075 .2 .025])
 
 subplot('position',[.35 .3 .25 .6])
 histogram(100*weak_strong_diff(:,:,summer_mos,:),bias_bins,'FaceColor',sumcolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');

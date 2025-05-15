@@ -46,7 +46,7 @@ grid_lat = h5read(IS2_data_string,'/latitude');
 OPTS.track_thresh = 11;
 
 % maximum along-track SIC bias
-OPTS.max_AT_bias = 0.025;
+OPTS.max_AT_bias = 1.025;
 
 % Thresholds for considering SIC coverage
 OPTS.MIZ_thresh = 0.15;

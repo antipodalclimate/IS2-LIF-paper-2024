@@ -25,7 +25,7 @@ shocolor = [.8 .8 .4];
 SIClims = 100*[0.6 1];
 biaslims = 100*[-.3 .3];
 
-usable_matrix = nan_usable; 
+usable_matrix = nan_usable_nodark; 
 
 
 for PMind = 1:nPM
@@ -82,7 +82,7 @@ for PMind = 1:nPM
 
 
     % Summer IS2 data (all)
-    plotter = na(:,:,summer_mos,:).*(sic_plot(:,:,summer_mos,:) - IS2_plot_all(:,:,summer_mos,:)); 
+    plotter = nan_usable(:,:,summer_mos,:).*(sic_plot(:,:,summer_mos,:) - IS2_plot_all(:,:,summer_mos,:)); 
     histogram(plotter(~isnan(plotter)),bias_bins,'FaceColor',shocolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
 
 
@@ -139,7 +139,7 @@ hold on
 plotter = usable_matrix(:,:,winter_mos,:).*(IS2_plot_spec(:,:,winter_mos,:)); 
 histogram(plotter(~isnan(plotter)),sic_bins,'FaceColor',wincolor,'FaceAlpha',0.7,'Normalization','pdf','edgecolor','none');
 
-plotter = nan_usable_all(:,:,summer_mos,:).*(IS2_plot_all(:,:,summer_mos,:)); 
+plotter = nan_usable(:,:,summer_mos,:).*(IS2_plot_all(:,:,summer_mos,:)); 
 
 histogram(plotter(~isnan(plotter)),sic_bins,'FaceColor',shocolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
 % 
@@ -174,4 +174,4 @@ pos = [6.75 3.5];
 set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
 set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
 
-print([Figure_folder '/histogram-figure.pdf'],'-dpdf','-r1200');
+print([Figure_folder '/histogram-figure-nodark.pdf'],'-dpdf','-r1200');
