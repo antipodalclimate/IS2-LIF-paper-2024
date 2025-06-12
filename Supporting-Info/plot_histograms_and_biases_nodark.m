@@ -52,7 +52,7 @@ for PMind = 1:nPM
 
     hold on
 
-    % Winter IS2 data (specular)
+    % Winter IS2 data (nodark)
     plotter = usable_matrix(:,:,winter_mos,:).*(sic_plot(:,:,winter_mos,:) - IS2_plot_spec(:,:,winter_mos,:)); 
     histogram(plotter(~isnan(plotter)),bias_bins,'FaceColor',wincolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
 
@@ -66,7 +66,7 @@ for PMind = 1:nPM
 
     xline(errplot,'--',errstr,'color',wincolor,'fontsize',8);
     
-    % Summer IS2 data (specular)
+    % Summer IS2 data (nodark)
     plotter = usable_matrix(:,:,summer_mos,:).*(sic_plot(:,:,summer_mos,:) - IS2_plot_spec(:,:,summer_mos,:)); 
     histogram(plotter(~isnan(plotter)),bias_bins,'FaceColor',sumcolor,'FaceAlpha',0.5,'Normalization','pdf','edgecolor','none');
 
