@@ -94,8 +94,6 @@ plotm(latvals,lonvals,'-r');
 
 
 
-
-
 allAxesInFigure = findall(gcf,'type','axes');
 letter = {'(b)','(a)','(b)','(a)','(e)','(f)','(g)','(e)','(c)'};
 

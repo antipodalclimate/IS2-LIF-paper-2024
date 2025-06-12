@@ -13,7 +13,7 @@ Script_folder = [Plotting_folder '/Scripts'];
 % For output
 
 % Figure_folder = '~/Library/CloudStorage/Dropbox-Brown/Apps/Overleaf/IS2-Concentration-Part-2/Figures';
-Figure_folder = '/Users/chorvat/Library/CloudStorage/Dropbox-Brown/Christopher Horvat/Apps/Overleaf/IS2-Concentration-Part-2/Figures';
+Figure_folder = '~/Dropbox (Brown)/Apps/Overleaf/IS2-Concentration-Part-2/Figures';
 
 load([Output_folder '/Orientation_Histograms.mat']);
 load([Output_folder '/Emulator_Data.mat']);
@@ -42,12 +42,12 @@ plot_emulation_uncertainty(Figure_folder,true_SIC,length_ice_measured,length_mea
 clearvars -except *_folder
 addpath('Product-Figures');
 
-PM_data_folder = '/Users/chorvat/Library/CloudStorage/Dropbox-Brown/Christopher Horvat/Research Projects/Active/Data/SIC-Data';
+PM_data_folder = '~/Dropbox (Brown)/Research Projects/Active/Data/SIC-Data';
 IS2_data_string = '/Users/chorvat/Code/IS2-Gridded-Products/Output/IS2_Data_25km_NH_v6.h5';
 
 
-addpath('/Users/chorvat/Library/CloudStorage/Dropbox-Brown/Christopher Horvat/Research Projects/Plot-Tools/'); 
-addpath('/Users/chorvat/Library/CloudStorage/Dropbox-Brown/Christopher Horvat/Research Projects/Plot-Tools/NE_Coastlines/'); 
+addpath('~/Dropbox (Brown)/Research Projects/Plot-Tools/'); 
+addpath('~/Dropbox (Brown)/Research Projects/Plot-Tools/NE_Coastlines/'); 
 
 %%
 
@@ -75,8 +75,14 @@ comp_weak_spec;
 
 %% Supporting Figures
 
+%S1
 comp_monthly_hist; 
 
+% S2
 comp_spec_monthly; 
 
+% S3
 plot_histograms_and_biases_nodark;
+
+% S4
+plot_LIF_coverage_monthly; 
