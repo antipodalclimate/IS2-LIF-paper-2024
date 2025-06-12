@@ -116,8 +116,11 @@ latvals = 0*lonvals + typical_PM_lat;
 plotm(latvals,lonvals,'-r'); 
 
 
+<<<<<<< HEAD
 %%
 
+=======
+>>>>>>> refs/remotes/origin/main
 
 allAxesInFigure = findall(gcf,'type','axes');
 letter = {'(b)','(a)','(b)','(a)','(e)','(f)','(g)','(e)','(c)'};
