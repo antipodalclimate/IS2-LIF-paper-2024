@@ -42,11 +42,12 @@ grid_lat = h5read(IS2_data_string,'/latitude');
 % AMSR_ASI_ind = 6;
 
 % We want to only consider those locations that have at least 12
-% intersecting tracks and at least 10000 total segments.
+% intersecting tracks.
 OPTS.track_thresh = 11;
 
 % maximum along-track SIC bias
-OPTS.max_AT_bias = 1.025;
+OPTS.max_AT_bias = 0.025;
+OPTS.max_dark_lead = 0.025;
 
 % Thresholds for considering SIC coverage
 OPTS.MIZ_thresh = 0.15;
@@ -96,11 +97,11 @@ AT_bias_AMSR = conc_AMSR_IS2 - conc_PM(:,:,:,:,5);
 % differences between the along-track AMSR data and the publicly available
 % AMSR data
 
-not_too_biased = max(abs(AT_bias_SSMI),abs(AT_bias_AMSR)) < OPTS.max_AT_bias;
+not_too_biased = max(abs(AT_bias_SSMI),abs(AT_bias_AMSR)) <= OPTS.max_AT_bias;
 
 % Here we want to eliminate measurements with high dark lead fractions. 
 
-not_too_much_dark_lead = (LIF_spec - LIF_all) < 0.025; 
+not_too_much_dark_lead = (LIF_spec - LIF_all) < OPTS.max_dark_lead; 
 
 % We no longer use bias-adjusted measurements
 
