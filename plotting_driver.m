@@ -55,7 +55,6 @@ global_product_preamble;
 
 %%
 % Here look at global coverage of the IS2 product
-addpath([Plotting_folder '/LIF-Coverage'])
 
 plot_LIF_coverage; 
 
@@ -75,8 +74,12 @@ comp_weak_spec;
 
 %% Supporting Figures
 
+addpath([Plotting_folder '/Supporting-Info/'])
+
 comp_monthly_hist; 
 
 comp_spec_monthly; 
 
 plot_histograms_and_biases_nodark;
+
+plot_geo_coverage_monthly; 

@@ -35,7 +35,6 @@ tot_area_PM = reshape(squeeze(sum(area_usable_PM_alone,[1 2])),[],1);
 tot_SIE_PM = squeeze(reshape(squeeze(sum(extent_PM,[1 2])),[],1,6));
 
 
-
 tot_area = reshape(squeeze(sum(area_usable,[1 2])),[],1);
 tot_area(tot_area == 0) = nan; 
 
@@ -48,6 +47,18 @@ subplot('position',[0.05 0.3 0.575 0.6])
 clabs = brewermap(8,'Paired')
 
 hold on
+
+%% Now add summer months in background
+
+yrvals = year(dater);
+movals = month(dater);
+yearnums = unique(yrvals); 
+sumcolor = [.8 .4 .4];
+
+
+%%
+
+
 for i = 1:size(tot_SIE_PM,2)
     plot(dater,tot_SIE_PM(:,i),'--','color',clabs(i,:),'linewidth',0.5);
 end
@@ -67,8 +78,20 @@ l0 = columnlegend(3,namer,'fontsize',8);
 set(l0,'position',[.05 0 .575 .05])
 l0.ItemTokenSize(1) = 10;
 
+for i = 1:length(yearnums)
+        
+    xpoints = dater(yrvals == yearnums(i) & (movals == 7 | movals == 8));
+
+    area([min(xpoints) - 15 max(xpoints) + 15],[1e8 1e8],'FaceColor',sumcolor,'FaceAlpha',0.5)
+
+end
+
+
+ylim([0 2e7]);
+
+
 subplot('position',[0.65 0.25 0.35 0.65])
-worldmap([60 90],[-180 180])
+worldmap([60 90],[0 360])
 pcolorm(grid_lat,grid_lon,frac_usable)
 set(gca,'clim',[0 1]); 
 make_HR_coastlines([.5 .5 .5])
@@ -93,7 +116,7 @@ latvals = 0*lonvals + typical_PM_lat;
 plotm(latvals,lonvals,'-r'); 
 
 
-
+%%
 
 
 allAxesInFigure = findall(gcf,'type','axes');
@@ -114,4 +137,4 @@ end
 pos = [6.5 2.5];
 set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
 set(gcf,'windowstyle','normal','position',[0 0 pos],'paperposition',[0 0 pos],'papersize',pos,'units','inches','paperunits','inches');
-print([Figure_folder '/coverage-figure.pdf'],'-dpdf','-r1200');
+saveas(gcf,[Figure_folder '/coverage-figure.pdf']);
